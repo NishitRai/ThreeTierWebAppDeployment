@@ -1,0 +1,53 @@
+services:
+  frontend:
+    build: 
+      context: ./frontend
+      args:
+        - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
+    container_name: frontend
+    ports:
+      - "80:80"
+    environment:
+      - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
+    depends_on:
+      - backend
+    networks:
+      - mynet
+  
+  backend:
+    build: ./backend
+    container_name: backend 
+    ports:
+      - "3500:3500"
+    environment:
+      - USE_MONGODB=true
+      - USE_DB_AUTH=true
+      - MONGO_USERNAME=appuser
+      - MONGO_PASSWORD=apppass
+      - MONGO_CONN_STR=mongodb://mongo:27017/appdb?authSource=appdb
+    depends_on:
+      - mongo
+    networks:
+      - mynet
+
+  mongo:
+    image: mongo:7
+    container_name: mongo-db
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
+      - MONGO_INITDB_DATABASE=appdb
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    ports:
+      - "27017:27017"
+    networks:
+      - mynet
+
+networks:
+  mynet:
+
+volumes:
+  mongo_data:
