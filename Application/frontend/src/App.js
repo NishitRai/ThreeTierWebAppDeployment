@@ -242,7 +242,7 @@ const AppContent = () => {
       <AppBar position="static" elevation={1}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            📋 Modern Todo App
+            📋 To-Do App
           </Typography>
           
           {selectedTasks.length > 0 && (

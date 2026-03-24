@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/tasks` || "http://localhost:3500/api/tasks";
+const apiUrl = `${window.RUNTIME_CONFIG.backendUrl}/api/tasks`;
 console.log('API URL:', apiUrl);
 
 // Configure axios defaults
