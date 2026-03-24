@@ -1,0 +1,41 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-taskapp
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"  # set to "true" when TLS is configured
+  namespace: threetier-app
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: taskapp.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: application-frontend
+                port:
+                  number: 80
+          - path: /api/tasks
+            pathType: Prefix
+            backend:
+              service:
+                name: application-backend
+                port:
+                  number: 3500
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: application-backend
+                port:
+                  number: 3500
+          - path: /ok
+            pathType: Prefix
+            backend:
+              service:
+                name: application-backend
+                port:
+                  number: 3500

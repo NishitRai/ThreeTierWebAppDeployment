@@ -1,0 +1,7 @@
+.vagrant
+.env
+
+Kubernetes/config.json
+*.bkp
+secret.yaml
+

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: application-frontend
+  namespace: threetier-app
+spec:
+  type: ClusterIP
+  selector:
+    app: application-frontend
+  ports:
+    - port: 80
+      targetPort: 80

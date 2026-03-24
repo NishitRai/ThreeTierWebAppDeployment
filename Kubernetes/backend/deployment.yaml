@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: application-backend
+  namespace: threetier-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: application-backend
+  template:
+    metadata:
+      labels:
+        app: application-backend
+    spec:
+      imagePullSecrets:
+        - name: ghcr-creds
+      containers:
+        - name: application-backend
+          image: ghcr.io/${GITHUB_USER}/threetierwebappdeployment/app-backend:dev
+          ports:
+            - containerPort: 3500
+          env:
+            - name: MONGO_CONN_STR
+              value: "mongodb://mongodb.threetier-app.svc.cluster.local:27017/appdb?authSource=appdb"
+            - name: USE_MONGODB
+              value: "true"
+            - name: USE_DB_AUTH
+              value: "true"
+            - name: MONGO_HOST
+              value: "mongodb.threetier-app.svc.cluster.local"
+            - name: MONGO_PORT
+              value: "27017"
+            - name: MONGO_DB
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-credentials
+                  key: MONGO_DB
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-credentials
+                  key: MONGO_USER
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-credentials
+                  key: MONGO_PASSWORD
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: application-frontend
+  namespace: threetier-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: application-frontend
+  template:
+    metadata:
+      labels:
+        app: application-frontend
+    spec:
+      imagePullSecrets:
+        - name: ghcr-creds
+      containers:
+        - name: application-frontend
+          image: ghcr.io/${GITHUB_USER}/threetierwebappdeployment/app-frontend:dev
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          env:
+            - name: BACKEND_URL
+              value: "http://taskapp.local"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
