@@ -1,8 +1,6 @@
+# Stage 1: Build react app
 FROM node:20 AS builder
 WORKDIR /usr/src/app
-
-ARG REACT_APP_BACKEND_URL
-ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
 
 COPY package*.json ./
 RUN npm install
@@ -12,7 +10,9 @@ RUN npm run build
 
 # Stage2: Create final image
 FROM nginx:alpine
-WORKDIR /app
-COPY --from=builder /usr/src/app/build/ /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
+COPY --from=builder /usr/src/app/build/ .
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/entrypoint.sh"]
