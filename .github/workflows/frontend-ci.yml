@@ -1,0 +1,18 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+    paths:
+      - "Application/frontend/**"
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - "Application/frontend/**"
+
+jobs:
+  frontend-ci:
+    uses: ./.github/workflows/reusable-ci.yml
+    with:
+      service_path: Application/frontend
+      image_name: frontend

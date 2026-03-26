@@ -1,0 +1,17 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+    paths: ["Application/backend/**"]
+    
+  pull_request:
+    branches: [ "main" ]
+    paths: ["Application/backend/**"]
+
+jobs:
+  backend-ci:
+    uses: ./.github/workflows/reusable-ci.yml
+    with:
+      service_path: Application/backend
+      image_name: backend

@@ -1,0 +1,59 @@
+name: Reusable CI
+
+on:
+  workflow_call:
+    inputs:
+      service_path:
+        required: true
+        type: string
+      image_name:
+        required: true
+        type: string
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ${{ inputs.service_path }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ${{ inputs.service_path }}/package-lock.json
+
+      - run: npm ci
+      - run: npm run lint --if-present
+      - run: npm test --if-present
+      - run: npm run build --if-present
+
+      # SCA
+      - run: npm audit --audit-level=critical
+
+      - name: Snyk
+        uses: snyk/actions/node@master
+        with:
+          args: test --file=${{ inputs.service_path }}/package.json
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      # Docker build (no push)
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t local/${{ inputs.image_name }}:${{ github.sha }} \
+            ${{ github.workspace }}/${{ inputs.service_path }}
+
+      # Container scan
+      - name: Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          image-ref: local/${{ inputs.image_name }}:${{ github.sha }}
+          severity: CRITICAL
+          exit-code: 1
