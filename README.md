@@ -218,8 +218,8 @@ Resolve the cluster IP using `kubectl get svc -n threetier-app` command.
 If local machine is Windows, you can find the hosts file at `C:\Windows\System32\drivers\etc\hosts`. Update the file with admin privileges and flush the DNS cache using `ipconfig /flushdns` command in Command Prompt.
 
 Then access:
-http://taskapp.local → Frontend
-http://taskapp.local/api/health → Backend health check
+* http://taskapp.local → Frontend
+* http://taskapp.local/api/health → Backend health check
 ---
 
 ## 🔄 CI Pipeline (GitHub Actions)
